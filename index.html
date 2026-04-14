@@ -1,0 +1,1300 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>NullTrace Pro — Steganography Suite</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=Jost:wght@300;400;500;600;700;800&family=DM+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #f5ede0;
+  --bg1:      #ede3d4;
+  --bg2:      #e4d8c5;
+  --bg3:      #d9cbb5;
+  --sur:      #cbbfa8;
+  --sur2:     #bdb09a;
+
+  --bd:       rgba(110,72,30,.13);
+  --bd2:      rgba(110,72,30,.26);
+  --bd3:      rgba(110,72,30,.46);
+
+  --cyan:     #9e6020;
+  --cyanl:    #c07e30;
+  --cyand:    rgba(158,96,32,.11);
+
+  --violet:   #8a4030;
+  --violetl:  #b06050;
+  --violetd:  rgba(138,64,48,.11);
+
+  --mint:     #4a7a58;
+  --mintl:    #6a9c76;
+  --mintd:    rgba(74,122,88,.11);
+
+  --rose:     #b04848;
+  --rosed:    rgba(176,72,72,.11);
+
+  --t1:       #1e1208;
+  --t2:       #5a3e28;
+  --t3:       #8a6e55;
+  --t4:       #baa890;
+
+  --mono:     'DM Mono', monospace;
+  --sans:     'Jost', sans-serif;
+  --serif:    'Cormorant Garamond', serif;
+
+  --radius:   12px;
+  --radius-sm:7px;
+}
+
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+html { -webkit-font-smoothing:antialiased; scroll-behavior:smooth }
+
+body {
+  background: var(--bg);
+  color: var(--t1);
+  font-family: var(--sans);
+  font-size: 14px;
+  line-height: 1.65;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ── BG ORBS ── */
+.orb-wrap { position:fixed; inset:0; z-index:0; pointer-events:none; overflow:hidden }
+.orb {
+  position:absolute; border-radius:50%;
+  filter:blur(80px); opacity:.18;
+  animation: float 14s ease-in-out infinite;
+}
+.orb-1 { width:500px; height:500px; background:var(--cyan);   top:-120px; left:-100px; animation-delay:0s }
+.orb-2 { width:400px; height:400px; background:var(--violet); bottom:-100px; right:-80px; animation-delay:4s }
+.orb-3 { width:300px; height:300px; background:var(--mint);   top:40%; left:55%; animation-delay:8s }
+@keyframes float {
+  0%,100% { transform: translate(0,0) scale(1) }
+  50%      { transform: translate(20px,-20px) scale(1.05) }
+}
+
+/* ── NAVBAR ── */
+.nav {
+  position:sticky; top:0; z-index:200;
+  height:64px; display:flex; align-items:center; justify-content:space-between;
+  padding:0 40px;
+  background:rgba(245,237,224,.93);
+  backdrop-filter:blur(28px);
+  border-bottom:1px solid var(--bd);
+}
+.logo { display:flex; align-items:center; gap:13px; text-decoration:none }
+.logo-icon {
+  width:36px; height:36px; border-radius:9px;
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  display:flex; align-items:center; justify-content:center;
+  font-size:17px;
+  box-shadow:0 0 20px rgba(158,96,32,.28);
+}
+.logo-text {
+  font-family:var(--sans); font-size:20px; font-weight:800;
+  letter-spacing:-.5px; color:var(--t1);
+}
+.logo-text span { color:var(--cyan) }
+.nav-pills { display:flex; align-items:center; gap:10px }
+.pill {
+  font-family:var(--mono); font-size:10px; letter-spacing:1.2px;
+  padding:5px 13px; border-radius:20px;
+  border:1px solid var(--bd2);
+  color:var(--t2);
+}
+.pill-live { display:flex; align-items:center; gap:7px; background:var(--bg2) }
+.pill-ver  { background:transparent; color:var(--t3) }
+.dot { width:6px; height:6px; border-radius:50%; background:var(--mint); box-shadow:0 0 8px var(--mint); animation:pulse 2s ease infinite }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.2} }
+
+/* ── HERO ── */
+.hero {
+  position:relative; z-index:1;
+  padding:56px 40px 44px;
+  border-bottom:1px solid var(--bd);
+  overflow:hidden;
+}
+.hero::after {
+  content:''; position:absolute; bottom:0; left:0; right:0; height:1px;
+  background:linear-gradient(90deg,transparent,var(--cyan) 30%,var(--violet) 70%,transparent);
+  opacity:.5;
+}
+.hero-eyebrow {
+  display:inline-flex; align-items:center; gap:8px;
+  font-family:var(--mono); font-size:10px; letter-spacing:2.5px; text-transform:uppercase;
+  color:var(--cyan); background:var(--cyand);
+  border:1px solid rgba(158,96,32,.25);
+  padding:5px 14px; border-radius:4px; margin-bottom:22px;
+}
+.hero-eyebrow::before { content:'◈'; font-size:9px }
+h1 {
+  font-family:var(--sans); font-weight:800;
+  font-size:clamp(28px,4vw,52px); line-height:1.05; letter-spacing:-.8px;
+  color:var(--t1); margin-bottom:16px;
+}
+h1 em {
+  font-style:normal;
+  background:linear-gradient(110deg,var(--cyan) 0%,var(--violet) 60%,var(--cyan) 100%);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
+  background-size:200%;
+  animation:shimmer 4s linear infinite;
+}
+@keyframes shimmer { 0%{background-position:0%} 100%{background-position:200%} }
+.hero-sub {
+  font-family:var(--serif); font-size:15px; color:var(--t2);
+  max-width:520px; line-height:1.8; margin-bottom:36px;
+}
+.hero-stats { display:flex; gap:36px; flex-wrap:wrap }
+.hstat {
+  padding-left:16px;
+  border-left:2px solid var(--bd2);
+}
+.hstat-v {
+  font-family:var(--sans); font-size:26px; font-weight:800;
+  color:var(--t1); line-height:1;
+}
+.hstat-v small { font-size:16px; font-weight:600; color:var(--cyan) }
+.hstat-l { font-family:var(--mono); font-size:9px; color:var(--t3); letter-spacing:2px; text-transform:uppercase; margin-top:5px }
+
+/* ── TAB BAR ── */
+.tabbar {
+  position:sticky; top:64px; z-index:100;
+  display:flex; align-items:stretch; gap:0;
+  padding:0 40px;
+  background:rgba(245,237,224,.95);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--bd);
+}
+.tab {
+  display:flex; align-items:center; gap:9px;
+  padding:0 26px; height:52px;
+  font-family:var(--sans); font-size:13px; font-weight:600; letter-spacing:.1px;
+  color:var(--t3); background:none; border:none; cursor:pointer;
+  border-bottom:2px solid transparent; margin-bottom:-1px;
+  transition:all .22s; white-space:nowrap;
+}
+.tab:hover { color:var(--t2) }
+.tab.on {
+  color:var(--cyan);
+  border-bottom-color:var(--cyan);
+  background:linear-gradient(to bottom,rgba(158,96,32,.07),transparent);
+}
+.tab-ico { font-size:15px }
+.pane { display:none; animation:fadein .26s ease }
+.pane.on { display:block }
+@keyframes fadein { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+/* ── MAIN WRAP ── */
+.wrap { max-width:1320px; margin:0 auto; padding:28px 40px 90px; position:relative; z-index:1 }
+
+/* ── STAT CHIPS ── */
+.chips { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin-bottom:26px }
+.chip {
+  background:var(--bg1); border:1px solid var(--bd);
+  border-radius:var(--radius); padding:16px 18px;
+  position:relative; overflow:hidden; transition:border-color .2s;
+}
+.chip:hover { border-color:var(--bd2) }
+.chip::before { content:''; position:absolute; top:0; left:0; right:0; height:2px }
+.chip.cy::before { background:linear-gradient(90deg,var(--cyan),var(--cyanl)) }
+.chip.vi::before { background:linear-gradient(90deg,var(--violet),var(--violetl)) }
+.chip.mn::before { background:linear-gradient(90deg,var(--mint),var(--mintl)) }
+.chip.rs::before { background:linear-gradient(90deg,var(--rose),#fda4af) }
+.chip-v { font-family:var(--mono); font-size:16px; font-weight:500; color:var(--t1); line-height:1.3 }
+.chip-l { font-family:var(--mono); font-size:9px; color:var(--t3); letter-spacing:1.5px; text-transform:uppercase; margin-top:6px }
+
+/* ── GRID ── */
+.g2 { display:grid; grid-template-columns:1fr 1fr; gap:20px }
+
+/* ── CARD ── */
+.card {
+  background:var(--bg1); border:1px solid var(--bd);
+  border-radius:var(--radius); overflow:hidden;
+  transition:border-color .25s, box-shadow .25s;
+}
+.card:hover { border-color:var(--bd2); box-shadow:0 4px 32px rgba(0,0,0,.3) }
+.card-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:18px 24px; border-bottom:1px solid var(--bd);
+  background:linear-gradient(135deg,rgba(158,96,32,.04),transparent);
+}
+.card-title { display:flex; align-items:center; gap:10px; font-weight:700; font-size:13.5px; color:var(--t1) }
+.badge {
+  font-family:var(--mono); font-size:9px; letter-spacing:1.5px; text-transform:uppercase;
+  padding:3px 9px; border-radius:4px; font-weight:500;
+}
+.badge-cy  { background:var(--cyand);    color:var(--cyanl);   border:1px solid rgba(158,96,32,.28) }
+.badge-mn  { background:var(--mintd);    color:var(--mintl);   border:1px solid rgba(74,122,88,.28) }
+.badge-vi  { background:var(--violetd);  color:var(--violetl); border:1px solid rgba(138,64,48,.28) }
+.card-body { padding:22px 24px }
+
+/* ── SECTION HEADER WITH HOW IT WORKS ── */
+.panel-header {
+  display:flex; align-items:center; justify-content:space-between;
+  margin-bottom:20px;
+}
+.panel-title {
+  font-family:var(--mono); font-size:10px; color:var(--t3); letter-spacing:2px; text-transform:uppercase;
+  display:flex; align-items:center; gap:10px;
+}
+.panel-title::after { content:''; flex:1; height:1px; background:var(--bd); min-width:40px }
+.hiw-btn {
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:var(--mono); font-size:10px; letter-spacing:1px; color:var(--cyan);
+  background:var(--cyand); border:1px solid rgba(158,96,32,.25);
+  padding:5px 13px; border-radius:20px; cursor:pointer;
+  transition:all .2s;
+}
+.hiw-btn:hover { background:rgba(158,96,32,.18); border-color:rgba(158,96,32,.45) }
+.hiw-btn::before { content:'?'; font-weight:700; font-size:11px; width:15px; height:15px; background:var(--cyan); color:#fff8f0; border-radius:50%; display:flex; align-items:center; justify-content:center; line-height:15px; text-align:center }
+
+/* ── FORMS ── */
+.f { margin-bottom:16px }
+.lbl {
+  display:flex; align-items:center; justify-content:space-between;
+  font-size:12px; font-weight:600; color:var(--t2);
+  margin-bottom:7px; letter-spacing:.2px;
+}
+.hint { font-size:11px; font-weight:400; color:var(--t3) }
+.hint.ok   { color:var(--mintl) }
+.hint.warn { color:var(--cyanl) }
+.hint.err  { color:var(--rose) }
+
+input[type=text],input[type=password],textarea,select {
+  width:100%;
+  background:var(--bg2); border:1px solid var(--bd);
+  color:var(--t1); font-family:var(--sans); font-size:13px;
+  padding:10px 14px; border-radius:var(--radius-sm); outline:none;
+  transition:border-color .2s, box-shadow .2s;
+  appearance:none;
+}
+input:focus,textarea:focus,select:focus {
+  border-color:rgba(158,96,32,.5);
+  box-shadow:0 0 0 3px rgba(158,96,32,.1);
+}
+input::placeholder,textarea::placeholder { color:var(--t3); font-size:13px }
+textarea { resize:vertical; min-height:88px; line-height:1.65 }
+select { cursor:pointer }
+select option { background:var(--bg2) }
+input[type=range] {
+  width:100%; accent-color:var(--cyan); background:transparent;
+  border:none; padding:0; height:22px; cursor:pointer; outline:none;
+}
+
+/* ── PASSWORD ── */
+.pwf { position:relative }
+.pwf input { padding-right:44px; font-family:var(--mono); letter-spacing:.5px }
+.eye {
+  position:absolute; right:0; top:0; bottom:0; width:42px;
+  display:flex; align-items:center; justify-content:center;
+  background:none; border:none; cursor:pointer; color:var(--t3); font-size:14px;
+  transition:color .2s; border-radius:0 var(--radius-sm) var(--radius-sm) 0;
+}
+.eye:hover { color:var(--cyanl) }
+.pwr { display:flex; gap:8px }
+.pwr .pwf { flex:1 }
+
+/* ── BUTTONS ── */
+.btn {
+  display:inline-flex; align-items:center; justify-content:center; gap:7px;
+  padding:10px 20px; font-family:var(--sans); font-size:13px; font-weight:700;
+  cursor:pointer; border-radius:var(--radius-sm); border:none;
+  transition:all .2s; white-space:nowrap; user-select:none; letter-spacing:.1px;
+  position:relative; overflow:hidden;
+}
+.btn::after { content:''; position:absolute; inset:0; background:rgba(255,255,255,.12); opacity:0; transition:opacity .2s }
+.btn:hover::after { opacity:1 }
+.btn:active { transform:scale(.97) }
+
+.btn-primary {
+  background:linear-gradient(135deg,#6e3a0a,var(--cyanl));
+  color:#fff4e8; font-weight:800;
+  box-shadow:0 2px 14px rgba(158,96,32,.3), inset 0 1px 0 rgba(255,255,255,.15);
+}
+.btn-primary:hover { box-shadow:0 4px 24px rgba(158,96,32,.5) }
+
+.btn-success {
+  background:linear-gradient(135deg,#0a5c40,var(--mint));
+  color:#02140d;
+  box-shadow:0 2px 12px rgba(52,211,153,.25);
+}
+.btn-success:hover { box-shadow:0 4px 20px rgba(52,211,153,.45) }
+
+.btn-ghost {
+  background:rgba(255,255,255,.04); color:var(--t2);
+  border:1px solid var(--bd);
+}
+.btn-ghost:hover { color:var(--cyanl); border-color:var(--bd2); background:rgba(56,189,248,.07) }
+
+.btn-sm  { padding:7px 13px; font-size:12px }
+.btn-fw  { width:100%; margin-top:8px }
+
+/* ── DROP ZONES ── */
+.drop {
+  border:2px dashed var(--bd); border-radius:var(--radius);
+  padding:28px 16px; text-align:center; cursor:pointer;
+  transition:all .22s; background:rgba(56,189,248,.01);
+}
+.drop:hover,.drop.ov {
+  border-color:rgba(56,189,248,.35);
+  background:rgba(56,189,248,.04);
+}
+.drop-ico { font-size:28px; display:block; margin-bottom:8px }
+.drop-tx  { font-size:12px; color:var(--t2); line-height:1.7 }
+.drop-tx strong { color:var(--cyanl) }
+.drop-tx small  { display:block; font-size:11px; color:var(--t3); margin-top:2px }
+input[type=file] { display:none }
+
+/* ── PREVIEW ── */
+.prev {
+  background:rgba(56,189,248,.03); border:1px solid var(--bd);
+  border-radius:var(--radius-sm);
+  min-height:110px; display:flex; align-items:center; justify-content:center;
+  overflow:hidden; position:relative; margin-top:9px;
+}
+.prev img { max-width:100%; max-height:180px; object-fit:contain; display:block }
+.prev-e { font-family:var(--mono); font-size:10px; color:var(--t3); letter-spacing:2px }
+.prev-cap {
+  position:absolute; bottom:0; left:0; right:0;
+  background:linear-gradient(transparent,rgba(6,30,50,.9));
+  padding:8px 12px; font-family:var(--mono); font-size:10px; color:var(--cyanl); display:none;
+}
+
+/* ── PROGRESS ── */
+.prog { margin:11px 0; display:none }
+.prog-l { display:flex; justify-content:space-between; font-size:11px; color:var(--t3); margin-bottom:6px; font-family:var(--mono) }
+.prog-pct { color:var(--cyanl) }
+.prog-track { height:3px; background:rgba(255,255,255,.05); border-radius:3px; overflow:hidden }
+.prog-bar { height:100%; width:0; border-radius:3px; background:linear-gradient(90deg,var(--cyan),var(--violet)); transition:width .25s }
+
+/* ── STATUS BOX ── */
+.stbox {
+  background:rgba(56,189,248,.04); border:1px solid rgba(56,189,248,.12);
+  border-radius:var(--radius-sm); padding:14px; margin-top:12px; display:none;
+}
+.stbox.on { display:block; animation:fadein .3s ease }
+.sr {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:5px 0; border-bottom:1px solid rgba(56,189,248,.07); font-size:12px;
+}
+.sr:last-child { border:none; padding-bottom:0 }
+.sk { color:var(--t3) }
+.sv { font-family:var(--mono); font-size:11px; color:var(--t1) }
+.sv.ok { color:var(--mintl) }
+.sv.er { color:var(--rose) }
+
+/* ── DOWNLOAD PANEL ── */
+.dlp {
+  display:none;
+  background:linear-gradient(135deg,rgba(52,211,153,.08),rgba(56,189,248,.05));
+  border:1px solid rgba(52,211,153,.2);
+  border-radius:var(--radius-sm); padding:14px 18px; margin-top:12px;
+  align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;
+}
+.dlp.on { display:flex; animation:fadein .3s ease }
+.dl-i strong { font-family:var(--mono); font-size:12px; color:var(--mintl); display:block; margin-bottom:2px }
+.dl-i small  { font-size:11px; color:var(--t3) }
+
+/* ── METRICS ── */
+.met { margin-bottom:13px }
+.met-r { display:flex; justify-content:space-between; font-size:11px; margin-bottom:5px; font-family:var(--mono) }
+.met-l { color:var(--t3) }
+.met-v { color:var(--cyanl) }
+.met-track { height:3px; background:rgba(255,255,255,.05); border-radius:3px; overflow:hidden }
+.met-bar  { height:100%; border-radius:3px; transition:width .7s }
+.met-cy   { background:linear-gradient(90deg,#0369a1,var(--cyanl)) }
+.met-mn   { background:linear-gradient(90deg,#065f46,var(--mintl)) }
+
+/* ── TOGGLE ── */
+.togr {
+  display:flex; align-items:flex-start; justify-content:space-between;
+  padding:11px 14px; background:rgba(129,140,248,.03);
+  border:1px solid var(--bd); border-radius:var(--radius-sm);
+  margin-bottom:10px; gap:10px;
+}
+.togi { flex:1 }
+.tog-l { font-size:12px; font-weight:600; color:var(--t2); display:block }
+.tog-d { font-size:11px; color:var(--t3); margin-top:1px }
+.sw { position:relative; width:38px; height:20px; flex-shrink:0; margin-top:2px }
+.sw input { opacity:0; width:0; height:0 }
+.sw-t {
+  position:absolute; cursor:pointer; inset:0;
+  background:rgba(255,255,255,.06); border:1px solid var(--bd);
+  border-radius:20px; transition:.3s;
+}
+.sw-t::before {
+  content:''; position:absolute; width:12px; height:12px;
+  left:3px; bottom:3px; background:var(--t3); border-radius:50%; transition:.3s;
+}
+.sw input:checked+.sw-t { background:rgba(56,189,248,.25); border-color:rgba(56,189,248,.5) }
+.sw input:checked+.sw-t::before { transform:translateX(18px); background:var(--cyanl); box-shadow:0 0 7px var(--cyanl) }
+
+/* ── MISC ── */
+hr { border:none; border-top:1px solid var(--bd); margin:16px 0 }
+.sec-l {
+  font-size:10px; font-weight:600; color:var(--t3); letter-spacing:1.5px; text-transform:uppercase;
+  margin-bottom:9px; display:flex; align-items:center; gap:9px; font-family:var(--mono);
+}
+.sec-l::after { content:''; flex:1; height:1px; background:var(--bd) }
+.cpw { position:relative }
+.cpw-b { position:absolute; top:7px; right:7px; z-index:2 }
+.range-labels { display:flex; justify-content:space-between; font-size:10px; color:var(--t3); margin-top:3px; font-family:var(--mono) }
+#audviz {
+  width:100%; height:58px; display:block;
+  background:rgba(56,189,248,.03); border:1px solid var(--bd);
+  border-radius:var(--radius-sm); margin:8px 0;
+}
+
+/* ── TOAST ── */
+.toast {
+  position:fixed; bottom:24px; right:24px; z-index:9999;
+  background:var(--bg2); border:1px solid var(--bd2);
+  border-radius:10px; padding:14px 18px; max-width:320px;
+  opacity:0; transform:translateY(10px); transition:all .3s; pointer-events:none;
+  box-shadow:0 10px 40px rgba(0,0,0,.6);
+}
+.toast.on { opacity:1; transform:translateY(0); pointer-events:all }
+.toast.ok  { border-left:3px solid var(--mintl) }
+.toast.err { border-left:3px solid var(--rose) }
+.toast.warn{ border-left:3px solid var(--cyanl) }
+.t-t { font-weight:700; font-size:13px; color:var(--t1); margin-bottom:3px }
+.t-m { font-size:12px; color:var(--t2) }
+
+/* ── FOOTER ── */
+footer {
+  border-top:1px solid var(--bd); padding:18px 40px;
+  display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:12px;
+  position:relative; z-index:1;
+}
+.ft-left { display:flex; flex-direction:column; gap:3px }
+.ft-brand { font-family:var(--sans); font-weight:800; font-size:14px; color:var(--t3) }
+.ft-brand span { color:var(--cyan) }
+.ft-sub { font-family:var(--mono); font-size:10px; color:var(--t4); letter-spacing:.5px }
+.ft-tags { display:flex; gap:6px; flex-wrap:wrap }
+.ft-tag {
+  font-family:var(--mono); font-size:9px; color:var(--t3);
+  background:var(--bg2); border:1px solid var(--bd);
+  padding:3px 10px; border-radius:20px; letter-spacing:1px;
+}
+
+/* ── MODAL ── */
+.modal-overlay {
+  position:fixed; inset:0; z-index:1000;
+  background:rgba(7,8,12,.8); backdrop-filter:blur(12px);
+  display:none; align-items:center; justify-content:center;
+  padding:20px;
+}
+.modal-overlay.open { display:flex; animation:fadein .22s ease }
+.modal {
+  background:var(--bg1); border:1px solid var(--bd2);
+  border-radius:16px; width:100%; max-width:600px; max-height:88vh;
+  overflow:hidden; display:flex; flex-direction:column;
+  box-shadow:0 24px 80px rgba(0,0,0,.7);
+  animation:slideup .25s ease;
+}
+@keyframes slideup { from{transform:translateY(20px);opacity:0} to{transform:translateY(0);opacity:1} }
+.modal-head {
+  display:flex; align-items:center; justify-content:space-between;
+  padding:20px 26px; border-bottom:1px solid var(--bd);
+  background:linear-gradient(135deg,rgba(56,189,248,.05),transparent);
+}
+.modal-title { font-size:16px; font-weight:800; color:var(--t1); display:flex; align-items:center; gap:10px }
+.modal-title .icon { font-size:20px }
+.modal-close {
+  width:32px; height:32px; border-radius:8px;
+  background:var(--bg3); border:1px solid var(--bd); color:var(--t2);
+  font-size:16px; cursor:pointer; display:flex; align-items:center; justify-content:center;
+  transition:all .2s;
+}
+.modal-close:hover { background:rgba(251,113,133,.15); border-color:rgba(251,113,133,.3); color:var(--rose) }
+.modal-body { padding:26px; overflow-y:auto; flex:1 }
+.modal-body::-webkit-scrollbar { width:4px }
+.modal-body::-webkit-scrollbar-thumb { background:var(--sur); border-radius:4px }
+
+/* STEPS */
+.steps { display:flex; flex-direction:column; gap:18px }
+.step {
+  display:grid; grid-template-columns:40px 1fr; gap:16px; align-items:start;
+}
+.step-num {
+  width:40px; height:40px; border-radius:10px; flex-shrink:0;
+  background:linear-gradient(135deg,var(--cyan),var(--violet));
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--sans); font-size:16px; font-weight:800; color:#050812;
+}
+.step-content { padding-top:2px }
+.step-title { font-size:13px; font-weight:700; color:var(--t1); margin-bottom:4px }
+.step-desc { font-size:12px; color:var(--t2); line-height:1.7 }
+.step-tip {
+  display:inline-block; margin-top:6px;
+  font-family:var(--mono); font-size:10px; color:var(--cyanl);
+  background:var(--cyand); border:1px solid rgba(56,189,248,.15);
+  padding:3px 9px; border-radius:4px; letter-spacing:.5px;
+}
+.modal-divider { height:1px; background:var(--bd); margin:20px 0 }
+.modal-note {
+  background:rgba(52,211,153,.07); border:1px solid rgba(52,211,153,.15);
+  border-radius:var(--radius-sm); padding:14px;
+  font-size:12px; color:var(--t2); line-height:1.7;
+}
+.modal-note strong { color:var(--mintl) }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width:4px }
+::-webkit-scrollbar-track { background:transparent }
+::-webkit-scrollbar-thumb { background:var(--sur); border-radius:4px }
+::-webkit-scrollbar-thumb:hover { background:var(--cyan) }
+
+/* ── RESPONSIVE ── */
+@media(max-width:920px) {
+  .g2   { grid-template-columns:1fr }
+  .chips{ grid-template-columns:repeat(2,1fr) }
+}
+@media(max-width:600px) {
+  .wrap,.hero,.nav,.tabbar,.footer { padding-left:18px; padding-right:18px }
+  .tabbar { padding:0 18px }
+  h1 { font-size:26px }
+}
+</style>
+</head>
+<body>
+
+<div class="orb-wrap">
+  <div class="orb orb-1"></div>
+  <div class="orb orb-2"></div>
+  <div class="orb orb-3"></div>
+</div>
+
+<!-- NAVBAR -->
+<nav class="nav">
+  <a class="logo">
+    <div class="logo-icon">🔏</div>
+    <div class="logo-text">Null<span>Trace</span></div>
+  </a>
+  <div class="nav-pills">
+    <div class="pill pill-live"><span class="dot"></span>System Active</div>
+    <div class="pill pill-ver">V2~PRO</div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">Professional Steganography Suite</div>
+  <h1>Conceal data <em>invisibly</em><br>inside any file.</h1>
+  <p class="hero-sub">Military-grade AES-256-GCM encryption fused with LSB steganography. Your message is encrypted first, then embedded invisibly — indistinguishable from the original.</p>
+  <div class="hero-stats">
+    <div class="hstat">
+      <div class="hstat-v" id="kO">0</div>
+      <div class="hstat-l">Operations</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-v" id="kB">0 <small>B</small></div>
+      <div class="hstat-l">Bytes Hidden</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-v">AES<small>-256</small></div>
+      <div class="hstat-l">Cipher</div>
+    </div>
+    <div class="hstat">
+      <div class="hstat-v">LSB<small>+GCM</small></div>
+      <div class="hstat-l">Algorithm</div>
+    </div>
+  </div>
+</section>
+
+<!-- TAB BAR -->
+<div class="tabbar">
+  <button class="tab on" onclick="ST('img',this)"><span class="tab-ico">🖼</span> Image</button>
+  <button class="tab" onclick="ST('aud',this)"><span class="tab-ico">🎵</span> Audio</button>
+  <button class="tab" onclick="ST('txt',this)"><span class="tab-ico">📄</span> Text</button>
+</div>
+
+<div class="wrap">
+
+<!-- ══════════════ IMAGE PANEL ══════════════ -->
+<div class="pane on" id="P-img">
+
+  <div class="panel-header">
+    <div class="panel-title">Image Steganography</div>
+    <button class="hiw-btn" onclick="openModal('hiw-img')">How it works</button>
+  </div>
+
+  <div class="chips">
+    <div class="chip cy"><div class="chip-v" id="iDim">—</div><div class="chip-l">Dimensions</div></div>
+    <div class="chip mn"><div class="chip-v" id="iCap">—</div><div class="chip-l">Max Capacity</div></div>
+    <div class="chip vi"><div class="chip-v" id="iUsed">—</div><div class="chip-l">Est. Payload</div></div>
+    <div class="chip rs"><div class="chip-v" id="iDepS">1-bit</div><div class="chip-l">LSB Depth</div></div>
+  </div>
+
+  <div class="g2">
+    <!-- ENCODE -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">📥 Encode — Embed Message</div>
+        <span class="badge badge-cy">ENCRYPT + HIDE</span>
+      </div>
+      <div class="card-body">
+        <div class="f">
+          <div class="lbl">Carrier Image</div>
+          <div class="drop" id="iDZ" onclick="G('iF').click()">
+            <span class="drop-ico">🖼</span>
+            <div class="drop-tx">Drag &amp; drop or <strong>click to browse</strong><small>PNG · JPG · BMP — larger image = more capacity</small></div>
+          </div>
+          <input type="file" id="iF" accept="image/*">
+          <div class="prev" id="iPv"><span class="prev-e">NO IMAGE LOADED</span><div class="prev-cap" id="iPC"></div></div>
+        </div>
+        <div class="f">
+          <div class="lbl">Secret Message <span class="hint" id="iMH">0 chars</span></div>
+          <textarea id="iMsg" placeholder="Type the message you want to hide..." oninput="updI()"></textarea>
+        </div>
+        <div class="f">
+          <div class="lbl">Password <span class="hint ok">Any password — no restrictions</span></div>
+          <div class="pwr">
+            <div class="pwf"><input type="password" id="iPwd" placeholder="Enter any password..."><button class="eye" onclick="EP('iPwd',this)">👁</button></div>
+            <button class="btn btn-ghost btn-sm" onclick="GP('iPwd')">Generate</button>
+          </div>
+        </div>
+        <div class="f">
+          <div class="lbl">LSB Depth <span class="hint" id="iDL">1 bit/channel</span></div>
+          <input type="range" min="1" max="4" value="1" id="iDep" oninput="onID()">
+          <div class="range-labels"><span>← Less visible</span><span>More capacity →</span></div>
+        </div>
+        <div class="togr">
+          <div class="togi">
+            <span class="tog-l">Noise padding beyond payload</span>
+            <span class="tog-d">Fill unused LSBs with random data to mask the payload boundary</span>
+          </div>
+          <label class="sw"><input type="checkbox" id="iNoise"><span class="sw-t"></span></label>
+        </div>
+        <div class="met">
+          <div class="met-r"><span class="met-l">Capacity usage</span><span class="met-v" id="iCP">—</span></div>
+          <div class="met-track"><div class="met-bar met-cy" id="iCB" style="width:0%"></div></div>
+        </div>
+        <div class="prog" id="iEP">
+          <div class="prog-l"><span id="iEL">Processing...</span><span class="prog-pct" id="iEPct">0%</span></div>
+          <div class="prog-track"><div class="prog-bar" id="iEB"></div></div>
+        </div>
+        <button class="btn btn-primary btn-fw" onclick="encImg()">▶&nbsp; Encode &amp; Hide Message</button>
+        <div class="stbox" id="iES">
+          <div class="sr"><span class="sk">Cipher</span><span class="sv">AES-256-GCM + PBKDF2</span></div>
+          <div class="sr"><span class="sk">Payload</span><span class="sv" id="iES1">—</span></div>
+          <div class="sr"><span class="sk">Channels</span><span class="sv" id="iES2">—</span></div>
+          <div class="sr"><span class="sk">Used</span><span class="sv" id="iES3">—</span></div>
+          <div class="sr"><span class="sk">Status</span><span class="sv ok">Complete ✓</span></div>
+        </div>
+        <div class="dlp" id="iDLP">
+          <div class="dl-i"><strong id="iDN">stego.png</strong><small>Lossless PNG · visually identical to original</small></div>
+          <button class="btn btn-success btn-sm" id="iDB">⬇ Download PNG</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- DECODE -->
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">📤 Decode — Extract Message</div>
+        <span class="badge badge-mn">DECRYPT + REVEAL</span>
+      </div>
+      <div class="card-body">
+        <div class="f">
+          <div class="lbl">Stego Image</div>
+          <div class="drop" onclick="G('iDF').click()">
+            <span class="drop-ico">🔍</span>
+            <div class="drop-tx">Drop stego PNG or <strong>click to browse</strong><small style="color:var(--rose)">⚠ Use the exact downloaded PNG — do not re-save or convert</small></div>
+          </div>
+          <input type="file" id="iDF" accept="image/*">
+          <div class="prev" id="iDPv"><span class="prev-e">NO IMAGE LOADED</span></div>
+        </div>
+        <div class="f">
+          <div class="lbl">Password</div>
+          <div class="pwf"><input type="password" id="iDPwd" placeholder="Same password used during encoding..."><button class="eye" onclick="EP('iDPwd',this)">👁</button></div>
+        </div>
+        <div class="f">
+          <div class="lbl">LSB Depth <span class="hint warn" id="iDDL">1 bit/channel</span></div>
+          <input type="range" min="1" max="4" value="1" id="iDDep" oninput="G('iDDL').textContent=this.value+' bit/channel'">
+          <div style="font-size:11px;color:var(--rose);margin-top:3px;font-family:var(--mono)">⚠ Must match encoding exactly</div>
+        </div>
+        <div class="prog" id="iDP">
+          <div class="prog-l"><span>Extracting &amp; decrypting...</span><span class="prog-pct" id="iDPct">0%</span></div>
+          <div class="prog-track"><div class="prog-bar" id="iDB2"></div></div>
+        </div>
+        <button class="btn btn-success btn-fw" onclick="decImg()">🔓&nbsp; Extract &amp; Decrypt</button>
+        <hr>
+        <div class="sec-l"><span>Decrypted Message</span></div>
+        <div class="cpw">
+          <textarea id="iDR" readonly placeholder="Decrypted message appears here..." style="min-height:96px;color:var(--mintl)"></textarea>
+          <div class="cpw-b"><button class="btn btn-ghost btn-sm" onclick="CP('iDR')">Copy</button></div>
+        </div>
+        <div class="stbox" id="iDS">
+          <div class="sr"><span class="sk">Payload</span><span class="sv" id="iDS1">—</span></div>
+          <div class="sr"><span class="sk">Auth Tag</span><span class="sv ok" id="iDS2">—</span></div>
+          <div class="sr"><span class="sk">Length</span><span class="sv" id="iDS3">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ AUDIO PANEL ══════════════ -->
+<div class="pane" id="P-aud">
+
+  <div class="panel-header">
+    <div class="panel-title">Audio Steganography</div>
+    <button class="hiw-btn" onclick="openModal('hiw-aud')">How it works</button>
+  </div>
+
+  <div class="chips">
+    <div class="chip cy"><div class="chip-v" id="aDr">—</div><div class="chip-l">Duration (s)</div></div>
+    <div class="chip mn"><div class="chip-v" id="aSp">—</div><div class="chip-l">Samples</div></div>
+    <div class="chip vi"><div class="chip-v" id="aCp">—</div><div class="chip-l">Max Capacity</div></div>
+    <div class="chip rs"><div class="chip-v" id="aSR">—</div><div class="chip-l">Sample Rate</div></div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">🎵 Audio Encode</div>
+        <span class="badge badge-cy">PCM LSB INJECTION</span>
+      </div>
+      <div class="card-body">
+        <div class="f">
+          <div class="lbl">Carrier WAV</div>
+          <div class="drop" onclick="G('aF').click()">
+            <span class="drop-ico">🎵</span>
+            <div class="drop-tx">Drop WAV or <strong>click to browse</strong><small>Longer audio = more hidden capacity</small></div>
+          </div>
+          <input type="file" id="aF" accept="audio/*">
+        </div>
+        <canvas id="audviz"></canvas>
+        <div class="met">
+          <div class="met-r"><span class="met-l">Capacity used</span><span class="met-v" id="aCP">0%</span></div>
+          <div class="met-track"><div class="met-bar met-mn" id="aCB" style="width:0%"></div></div>
+        </div>
+        <div class="f">
+          <div class="lbl">Secret Message <span class="hint" id="aMH">0 chars</span></div>
+          <textarea id="aMsg" placeholder="Message to embed in audio..." oninput="updA()"></textarea>
+        </div>
+        <div class="f">
+          <div class="lbl">Password <span class="hint ok">Any password — no restrictions</span></div>
+          <div class="pwr">
+            <div class="pwf"><input type="password" id="aPwd" placeholder="Enter any password..."><button class="eye" onclick="EP('aPwd',this)">👁</button></div>
+            <button class="btn btn-ghost btn-sm" onclick="GP('aPwd')">Generate</button>
+          </div>
+        </div>
+        <div class="prog" id="aEP">
+          <div class="prog-l"><span id="aEL">Processing...</span><span class="prog-pct" id="aEPct">0%</span></div>
+          <div class="prog-track"><div class="prog-bar" id="aEB"></div></div>
+        </div>
+        <button class="btn btn-primary btn-fw" onclick="encAud()">▶&nbsp; Encode Audio</button>
+        <div class="dlp" id="aDLP">
+          <div class="dl-i"><strong id="aDN">stego_audio.wav</strong><small>Lossless WAV · aurally identical to original</small></div>
+          <button class="btn btn-success btn-sm" id="aDB">⬇ Download WAV</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">🔊 Audio Decode</div>
+        <span class="badge badge-mn">EXTRACT FROM PCM</span>
+      </div>
+      <div class="card-body">
+        <div class="f">
+          <div class="lbl">Stego WAV</div>
+          <div class="drop" onclick="G('aDF').click()">
+            <span class="drop-ico">🔍</span>
+            <div class="drop-tx">Drop stego WAV or <strong>click to browse</strong></div>
+          </div>
+          <input type="file" id="aDF" accept="audio/*">
+        </div>
+        <div class="f">
+          <div class="lbl">Password</div>
+          <div class="pwf"><input type="password" id="aDPwd" placeholder="Same password used during encoding..."><button class="eye" onclick="EP('aDPwd',this)">👁</button></div>
+        </div>
+        <div class="prog" id="aDP">
+          <div class="prog-l"><span>Extracting...</span><span class="prog-pct" id="aDPct">0%</span></div>
+          <div class="prog-track"><div class="prog-bar" id="aDB2"></div></div>
+        </div>
+        <button class="btn btn-success btn-fw" onclick="decAud()">🔓&nbsp; Extract Audio Message</button>
+        <hr>
+        <div class="sec-l"><span>Extracted Message</span></div>
+        <div class="cpw">
+          <textarea id="aDR" readonly placeholder="Decoded message appears here..." style="min-height:96px;color:var(--mintl)"></textarea>
+          <div class="cpw-b"><button class="btn btn-ghost btn-sm" onclick="CP('aDR')">Copy</button></div>
+        </div>
+        <div class="stbox" id="aDS">
+          <div class="sr"><span class="sk">Payload</span><span class="sv" id="aDS1">—</span></div>
+          <div class="sr"><span class="sk">Decryption</span><span class="sv ok" id="aDS2">—</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════ TEXT PANEL ══════════════ -->
+<div class="pane" id="P-txt">
+
+  <div class="panel-header">
+    <div class="panel-title">Text Steganography</div>
+    <button class="hiw-btn" onclick="openModal('hiw-txt')">How it works</button>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">📝 Text Encode</div>
+        <span class="badge badge-vi">ZERO-WIDTH INJECTION</span>
+      </div>
+      <div class="card-body">
+        <div class="f">
+          <div class="lbl">Cover Text <span class="hint">Visible to everyone</span></div>
+          <textarea id="tCov" placeholder="Write any normal-looking text here. Your secret hides inside using invisible Unicode characters..." style="min-height:100px"></textarea>
+        </div>
+        <div class="f">
+          <div class="lbl">Secret Message</div>
+          <textarea id="tSec" placeholder="The message to hide..."></textarea>
+        </div>
+        <div class="f">
+          <div class="lbl">Password <span class="hint ok">Any password — no restrictions</span></div>
+          <div class="pwr">
+            <div class="pwf"><input type="password" id="tPwd" placeholder="Enter any password..."><button class="eye" onclick="EP('tPwd',this)">👁</button></div>
+            <button class="btn btn-ghost btn-sm" onclick="GP('tPwd')">Generate</button>
+          </div>
+        </div>
+        <div class="f">
+          <div class="lbl">Encoding Method</div>
+          <select id="tMeth">
+            <option value="zwc">Zero-Width Characters (invisible — recommended)</option>
+            <option value="ws">Trailing Whitespace (spaces &amp; tabs)</option>
+            <option value="hg">Unicode Homoglyphs (Cyrillic substitution)</option>
+          </select>
+        </div>
+        <button class="btn btn-primary btn-fw" onclick="encTxt()">▶&nbsp; Embed Secret in Text</button>
+        <div id="tOW" style="display:none;margin-top:16px">
+          <div class="sec-l"><span>Stego Text — Copy &amp; Send</span></div>
+          <div class="cpw">
+            <textarea id="tOut" readonly style="min-height:100px;color:var(--cyanl);font-family:var(--mono);font-size:12px"></textarea>
+            <div class="cpw-b"><button class="btn btn-ghost btn-sm" onclick="CP('tOut')">Copy</button></div>
+          </div>
+          <div id="tSt" style="font-size:11px;color:var(--t3);margin-top:6px;font-family:var(--mono)"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head">
+        <div class="card-title">🔍 Text Decode</div>
+        <span class="badge badge-mn">REVEAL SECRET</span>
+      </div>
+      <div class="card-body">
+        <div class="f">
+          <div class="lbl">Stego Text</div>
+          <textarea id="tStIn" placeholder="Paste the stego text here to reveal the hidden message..." style="min-height:100px"></textarea>
+        </div>
+        <div class="f">
+          <div class="lbl">Password</div>
+          <div class="pwf"><input type="password" id="tDPwd" placeholder="Same password used during encoding..."><button class="eye" onclick="EP('tDPwd',this)">👁</button></div>
+        </div>
+        <div class="f">
+          <div class="lbl">Method <span class="hint err">Must match encoding</span></div>
+          <select id="tDMeth">
+            <option value="zwc">Zero-Width Characters</option>
+            <option value="ws">Trailing Whitespace</option>
+            <option value="hg">Unicode Homoglyphs</option>
+          </select>
+        </div>
+        <button class="btn btn-success btn-fw" onclick="decTxt()">🔓&nbsp; Extract Hidden Message</button>
+        <hr>
+        <div class="sec-l"><span>Revealed Secret</span></div>
+        <div class="cpw">
+          <textarea id="tDR" readonly placeholder="Hidden message appears here..." style="min-height:100px;color:var(--mintl)"></textarea>
+          <div class="cpw-b"><button class="btn btn-ghost btn-sm" onclick="CP('tDR')">Copy</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /wrap -->
+
+<footer>
+  <div class="ft-left">
+    <div class="ft-brand">Null<span>Trace</span> Pro</div>
+    <div class="ft-sub">Professional Steganography Suite · Client-Side · No Server Contact</div>
+  </div>
+  <div class="ft-tags">
+    <div class="ft-tag">AES-256-GCM</div>
+    <div class="ft-tag">PBKDF2×100K</div>
+    <div class="ft-tag">LSB-STEG</div>
+    <div class="ft-tag">CLIENT-SIDE</div>
+  </div>
+</footer>
+
+<div class="toast" id="toast"><div class="t-t" id="tT"></div><div class="t-m" id="tM"></div></div>
+<canvas id="wc" style="display:none"></canvas>
+
+<!-- ══════════ HOW IT WORKS — IMAGE ══════════ -->
+<div class="modal-overlay" id="hiw-img">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title"><span class="icon">🖼</span> How Image Steganography Works</div>
+      <button class="modal-close" onclick="closeModal('hiw-img')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Upload a Carrier Image</div>
+            <div class="step-desc">Choose any PNG, JPG, or BMP image. Larger images offer more hidden capacity — a 1920×1080 image at 1-bit depth can store roughly 750 KB of encrypted data. The image itself is never altered visibly.</div>
+            <span class="step-tip">TIP: Use PNG for best results — JPG compression destroys hidden data</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Write Your Secret Message &amp; Set a Password</div>
+            <div class="step-desc">Type the message you want to hide. Enter any password — it's used with PBKDF2 (100,000 rounds) to derive a strong AES-256 encryption key. Use "Generate" for a cryptographically random 36-character key.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Choose LSB Depth (1–4 bits)</div>
+            <div class="step-desc">Controls how many least-significant bits per colour channel are used. Depth 1 is invisible to the human eye. Depth 4 gives 4× the capacity but may introduce a slight colour shift — not recommended for sensitive images.</div>
+            <span class="step-tip">RULE: Note your depth — the receiver must use the exact same value to decode</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">Encode &amp; Download the Stego PNG</div>
+            <div class="step-desc">Your message is AES-256-GCM encrypted, then the encrypted bytes are scattered across the image's pixel colour values by overwriting the lowest bits. The output is a lossless PNG that looks identical to the original.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <div class="step-title">Decode on the Other End</div>
+            <div class="step-desc">Load the exact downloaded PNG into the Decode panel. Use the same password and the same LSB depth. The tool extracts the hidden bits, reassembles the ciphertext, and decrypts your message.</div>
+            <span class="step-tip">WARNING: Never re-save, compress, or screenshot the PNG — this destroys the hidden data</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-divider"></div>
+      <div class="modal-note">
+        <strong>Security note:</strong> All processing happens entirely in your browser. No data is ever uploaded or sent anywhere. The encryption uses the Web Crypto API's native AES-256-GCM — the same standard used by banks and governments.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ HOW IT WORKS — AUDIO ══════════ -->
+<div class="modal-overlay" id="hiw-aud">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title"><span class="icon">🎵</span> How Audio Steganography Works</div>
+      <button class="modal-close" onclick="closeModal('hiw-aud')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Upload a WAV Audio File</div>
+            <div class="step-desc">Only uncompressed WAV files work — formats like MP3 use lossy compression that destroys hidden data. A 1-minute stereo WAV at 44.1 kHz gives you roughly 660 KB of hidden storage.</div>
+            <span class="step-tip">TIP: Use longer WAV files for more capacity</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Type Your Message &amp; Password</div>
+            <div class="step-desc">Enter your secret message and a strong password. The password goes through PBKDF2 key derivation with 100,000 iterations before being used to AES-256-GCM encrypt your message.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">LSB Injection into Audio Samples</div>
+            <div class="step-desc">The encrypted bytes are converted to bits. Each bit overwrites the least-significant bit of a PCM audio sample. At 16-bit audio, flipping the last bit changes a sample's value by only 1 out of 65,536 — completely inaudible.</div>
+            <span class="step-tip">The waveform visualiser shows your audio — after encoding it looks identical</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">Download the Stego WAV</div>
+            <div class="step-desc">The output is a WAV file that sounds exactly like the original. Share it like any audio file — via email, messaging apps, or file transfer. Do not convert it to MP3 or any other format.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <div class="step-title">Extract on the Other End</div>
+            <div class="step-desc">Load the stego WAV into the Decode panel. Enter the same password. The tool reads the LSBs of each sample, reassembles the encrypted payload, and decrypts your original message.</div>
+            <span class="step-tip">WARNING: Only share and use the exact downloaded WAV — never re-encode or convert it</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-divider"></div>
+      <div class="modal-note">
+        <strong>Security note:</strong> The human ear cannot detect changes smaller than 1/100th of a percent in amplitude. A 1-bit change to a 16-bit sample is 0.0015% — well below any audible threshold, even on studio-quality headphones.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════ HOW IT WORKS — TEXT ══════════ -->
+<div class="modal-overlay" id="hiw-txt">
+  <div class="modal">
+    <div class="modal-head">
+      <div class="modal-title"><span class="icon">📄</span> How Text Steganography Works</div>
+      <button class="modal-close" onclick="closeModal('hiw-txt')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <div class="step-title">Write Cover Text &amp; Your Secret Message</div>
+            <div class="step-desc">The cover text is what everyone sees — write something natural and plausible for your context, like a social media post, email, or article excerpt. Your secret message will be hidden inside it, completely invisibly.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <div class="step-title">Choose an Encoding Method</div>
+            <div class="step-desc">Three methods are available. <strong style="color:var(--cyanl)">Zero-Width Characters</strong> inserts invisible Unicode control characters between letters — undetectable in almost all platforms. <strong style="color:var(--cyanl)">Trailing Whitespace</strong> appends spaces or tabs to each line. <strong style="color:var(--cyanl)">Unicode Homoglyphs</strong> swaps select Latin letters for visually identical Cyrillic ones.</div>
+            <span class="step-tip">RECOMMENDED: Zero-Width Characters — invisible on every major platform</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <div class="step-title">Encrypt &amp; Embed</div>
+            <div class="step-desc">Your secret message is AES-256-GCM encrypted using your password, then the encrypted bytes are converted to bits. Each bit maps to one invisible character (or whitespace, or homoglyph) inserted into the cover text.</div>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <div class="step-title">Copy &amp; Send the Stego Text</div>
+            <div class="step-desc">The output looks exactly like your original cover text. Copy it and send it anywhere — messages, emails, social posts. The hidden data travels with it invisibly. Make sure to copy the entire text, including any invisible characters.</div>
+            <span class="step-tip">TIP: Use platforms that preserve Unicode — avoid apps that strip invisible characters</span>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <div class="step-title">Decode by Pasting the Text</div>
+            <div class="step-desc">Paste the stego text into the Decode panel, enter the same password, and select the same method. The tool extracts the hidden bits, decrypts the payload, and reveals your original message.</div>
+            <span class="step-tip">WARNING: Both sender and receiver must use the exact same encoding method</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-divider"></div>
+      <div class="modal-note">
+        <strong>Capacity note:</strong> Text steganography has much lower capacity than image or audio methods. Each cover text character can carry approximately 1 hidden bit. A 500-word cover text can hide roughly 60 characters of plaintext after encryption overhead.
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+'use strict';
+const G = id => document.getElementById(id);
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const fB = n => n>=1048576?(n/1048576).toFixed(1)+' MB':n>=1024?(n/1024).toFixed(1)+' KB':n+' B';
+
+/* MODAL */
+function openModal(id) { G(id).classList.add('open'); document.body.style.overflow='hidden' }
+function closeModal(id) { G(id).classList.remove('open'); document.body.style.overflow='' }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if(e.target===m) closeModal(m.id) });
+});
+document.addEventListener('keydown', e => {
+  if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(m => closeModal(m.id));
+});
+
+/* TOAST */
+let TT = null;
+function toast(title, msg, type='ok') {
+  G('tT').textContent=title; G('tM').textContent=msg||'';
+  const el=G('toast'); el.className='toast on '+type;
+  clearTimeout(TT); TT=setTimeout(()=>el.classList.remove('on'),4000);
+}
+
+/* UTILS */
+function ST(n,b) {
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('on'));
+  document.querySelectorAll('.pane').forEach(x=>x.classList.remove('on'));
+  b.classList.add('on'); G('P-'+n).classList.add('on');
+}
+function EP(id,btn) {
+  const el=G(id);
+  if(el.type==='password'){el.type='text';btn.textContent='🙈';btn.style.color='var(--cyanl)'}
+  else{el.type='password';btn.textContent='👁';btn.style.color=''}
+}
+async function GP(id) {
+  const b=crypto.getRandomValues(new Uint8Array(18));
+  G(id).value=[...b].map(x=>x.toString(16).padStart(2,'0')).join('');
+  toast('Password generated','Strong 36-char key created','ok');
+}
+function CP(id) {
+  const el=G(id);
+  if(!el.value){toast('Empty','Nothing to copy','warn');return}
+  navigator.clipboard.writeText(el.value).then(()=>toast('Copied','','ok')).catch(()=>{el.select();document.execCommand('copy');toast('Copied','','ok')});
+}
+function setP(w,b,p,v,l,li) {
+  G(w).style.display='block'; G(b).style.width=v+'%';
+  if(p) G(p).textContent=Math.round(v)+'%';
+  if(li&&l) G(li).textContent=l;
+}
+function hideP(id) { G(id).style.display='none' }
+let OPS=0, BYTES=0;
+function addStat(n) {
+  OPS++; BYTES+=n; G('kO').textContent=OPS;
+  const v=BYTES;
+  G('kB').innerHTML=v>=1048576?`${(v/1048576).toFixed(1)} <small>MB</small>`:v>=1024?`${(v/1024).toFixed(1)} <small>KB</small>`:`${v} <small>B</small>`;
+}
+
+/* AES-256-GCM */
+const SALT=new TextEncoder().encode('NullTrace.V5.SALT.2025');
+async function DK(pw){const r=await crypto.subtle.importKey('raw',new TextEncoder().encode(pw),'PBKDF2',false,['deriveKey']);return crypto.subtle.deriveKey({name:'PBKDF2',salt:SALT,iterations:100000,hash:'SHA-256'},r,{name:'AES-GCM',length:256},false,['encrypt','decrypt'])}
+async function ENC(text,pw){const key=await DK(pw),iv=crypto.getRandomValues(new Uint8Array(12));const ct=new Uint8Array(await crypto.subtle.encrypt({name:'AES-GCM',iv},key,new TextEncoder().encode(text)));const o=new Uint8Array(4+12+ct.length);o[0]=ct.length&0xFF;o[1]=(ct.length>>8)&0xFF;o[2]=(ct.length>>16)&0xFF;o[3]=(ct.length>>24)&0xFF;o.set(iv,4);o.set(ct,16);return o}
+async function DEC(data,pw){if(data.length<17)throw new Error('Too small');const L=data[0]|(data[1]<<8)|(data[2]<<16)|(data[3]<<24);if(L<=0||L>data.length-16)throw new Error('Bad length');const key=await DK(pw);const pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:data.slice(4,16)},key,data.slice(16,16+L));return new TextDecoder().decode(pt)}
+function mkE(store){const e=new Uint8Array(4+store.length);e[0]=store.length&0xFF;e[1]=(store.length>>8)&0xFF;e[2]=(store.length>>16)&0xFF;e[3]=(store.length>>24)&0xFF;e.set(store,4);return e}
+
+/* IMAGE */
+let IW=0,IH=0,IPIX=null,SURL=null,SFNAME='';
+function loadImg(file,cb){const fr=new FileReader();fr.onload=ev=>{const img=new Image();img.onload=()=>cb(img,ev.target.result);img.onerror=()=>toast('Error','Cannot decode image','err');img.src=ev.target.result};fr.onerror=()=>toast('Error','Cannot read file','err');fr.readAsDataURL(file)}
+
+G('iF').addEventListener('change',function(e){const f=e.target.files[0];if(!f)return;loadImg(f,(img,url)=>{IW=img.naturalWidth;IH=img.naturalHeight;const cv=G('wc');cv.width=IW;cv.height=IH;const ctx=cv.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0);IPIX=ctx.getImageData(0,0,IW,IH);const pv=G('iPv');pv.innerHTML='';const th=new Image();th.src=url;pv.appendChild(th);const cap=document.createElement('div');cap.className='prev-cap';cap.style.display='block';cap.textContent=`${IW}×${IH} · ${fB(f.size)}`;pv.appendChild(cap);updI();toast('Image loaded',`${IW}×${IH} · ${fB(f.size)}`,'ok')})});
+const IDZ=G('iDZ');IDZ.addEventListener('dragover',e=>{e.preventDefault();IDZ.classList.add('ov')});IDZ.addEventListener('dragleave',()=>IDZ.classList.remove('ov'));IDZ.addEventListener('drop',e=>{e.preventDefault();IDZ.classList.remove('ov');if(e.dataTransfer.files[0]){G('iF').files=e.dataTransfer.files;G('iF').dispatchEvent(new Event('change'))}});
+
+function onID(){const d=G('iDep').value;G('iDL').textContent=d+' bit/channel';G('iDepS').textContent=d+'-bit';updI()}
+function updI(){if(!IPIX)return;const d=parseInt(G('iDep').value),maxB=Math.floor(IW*IH*3*d/8)-4,ml=new TextEncoder().encode(G('iMsg').value).length,est=ml+4+12+17;G('iDim').textContent=`${IW}×${IH}`;G('iCap').textContent=fB(Math.max(0,maxB));G('iUsed').textContent=fB(est);G('iMH').textContent=G('iMsg').value.length+' chars';const pct=maxB>0?Math.min(100,(est/maxB)*100):0;G('iCP').textContent=pct.toFixed(1)+'%';G('iCB').style.width=pct+'%'}
+
+async function encImg(){
+  if(!IPIX){toast('No image','Load a carrier image first','err');return}
+  const msg=G('iMsg').value.trim();if(!msg){toast('No message','Enter a secret message','err');return}
+  const pwd=G('iPwd').value;if(!pwd){toast('No password','Enter a password','err');return}
+  setP('iEP','iEB','iEPct',15,'Encrypting AES-256-GCM...','iEL');await sleep(30);
+  let store;try{store=await ENC(msg,pwd)}catch(er){hideP('iEP');toast('Error',er.message,'err');return}
+  const embed=mkE(store),depth=parseInt(G('iDep').value),mask=(1<<depth)-1,imask=0xFF^mask;
+  const totalCh=IW*IH*3,totalBits=embed.length*8,chN=Math.ceil(totalBits/depth);
+  if(chN>totalCh){hideP('iEP');toast('Image too small',`Need ${fB(Math.ceil(chN/8))}, capacity ${fB(Math.floor(totalCh*depth/8))}`,'err');return}
+  setP('iEP','iEB','iEPct',45,'Writing pixels...','iEL');await sleep(30);
+  const src=IPIX.data,dst=new Uint8ClampedArray(src);
+  for(let ch=0;ch<chN;ch++){const px=Math.floor(ch/3)*4+(ch%3);let bits=0;for(let b=0;b<depth;b++){const gi=ch*depth+b;const bv=gi<totalBits?(embed[gi>>3]>>(7-(gi&7)))&1:0;bits=(bits<<1)|bv}dst[px]=(src[px]&imask)|(bits&mask)}
+  if(G('iNoise').checked){for(let ch=chN;ch<Math.min(chN+8000,totalCh);ch++){const px=Math.floor(ch/3)*4+(ch%3);dst[px]=(src[px]&imask)|(Math.floor(Math.random()*(mask+1)))}}
+  setP('iEP','iEB','iEPct',82,'Exporting PNG...','iEL');await sleep(30);
+  const cv=G('wc');cv.width=IW;cv.height=IH;cv.getContext('2d',{willReadFrequently:true}).putImageData(new ImageData(dst,IW,IH),0,0);
+  SURL=cv.toDataURL('image/png');SFNAME='stego_'+Date.now()+'.png';
+  setP('iEP','iEB','iEPct',100,'Done!','iEL');await sleep(250);hideP('iEP');
+  G('iES').classList.add('on');G('iES1').textContent=fB(store.length);G('iES2').textContent=`${chN}/${totalCh}`;G('iES3').textContent=((chN/totalCh)*100).toFixed(2)+'%';
+  G('iDN').textContent=SFNAME;G('iDLP').classList.add('on');
+  G('iDB').onclick=function(){if(!SURL){toast('Not ready','Encode first','err');return}const a=document.createElement('a');a.href=SURL;a.download=SFNAME;a.style.display='none';document.body.appendChild(a);a.click();setTimeout(()=>document.body.removeChild(a),500);toast('Downloading',SFNAME,'ok')};
+  addStat(store.length);toast('Encoded!','Click Download PNG to save','ok');
+}
+
+G('iDF').addEventListener('change',function(e){const f=e.target.files[0];if(!f)return;loadImg(f,(img,url)=>{const pv=G('iDPv');pv.innerHTML='';const th=new Image();th.src=url;pv.appendChild(th);toast('Stego image loaded',f.name,'ok')})});
+
+async function decImg(){
+  const f=G('iDF').files[0];if(!f){toast('No image','Load the stego image first','err');return}
+  const pwd=G('iDPwd').value;if(!pwd){toast('No password','Enter the decryption password','err');return}
+  setP('iDP','iDB2','iDPct',15,'','');await sleep(20);
+  const dataUrl=await new Promise((res,rej)=>{const fr=new FileReader();fr.onload=ev=>res(ev.target.result);fr.onerror=rej;fr.readAsDataURL(f)});
+  const img=await new Promise((res,rej)=>{const im=new Image();im.onload=()=>res(im);im.onerror=rej;im.src=dataUrl});
+  const W=img.naturalWidth,H=img.naturalHeight,cv=document.createElement('canvas');cv.width=W;cv.height=H;
+  const ctx=cv.getContext('2d',{willReadFrequently:true});ctx.drawImage(img,0,0);
+  const pix=ctx.getImageData(0,0,W,H).data,totalCh=W*H*3,depth=parseInt(G('iDDep').value),mask=(1<<depth)-1;
+  setP('iDP','iDB2','iDPct',40,'','');await sleep(20);
+  function readCh(startCh,numBytes){const out=new Uint8Array(numBytes),need=numBytes*8;let done=0;for(let ch=startCh;done<need;ch++){if(ch>=totalCh)break;const px=Math.floor(ch/3)*4+(ch%3),val=pix[px]&mask;for(let b=depth-1;b>=0;b--){if(done>=need)break;if((val>>b)&1)out[done>>3]|=(1<<(7-(done&7)));done++}}return out}
+  const hdrCh=Math.ceil(32/depth),lenB=readCh(0,4);
+  const sLen=lenB[0]|(lenB[1]<<8)|(lenB[2]<<16)|(lenB[3]<<24);
+  setP('iDP','iDB2','iDPct',60,'','');await sleep(20);
+  if(sLen<=0||sLen>Math.floor(totalCh*depth/8)){hideP('iDP');G('iDR').value='⚠ No hidden data found.\n\n• Check LSB depth matches encoding\n• Use the exact downloaded PNG\n• Do not re-save or convert the image';toast('Not found','Wrong depth or wrong image','err');return}
+  const store=readCh(hdrCh,sLen);setP('iDP','iDB2','iDPct',82,'','');await sleep(20);
+  try{const msg=await DEC(store,pwd);G('iDR').value=msg;setP('iDP','iDB2','iDPct',100,'','');await sleep(250);hideP('iDP');G('iDS').classList.add('on');G('iDS1').textContent=fB(sLen);G('iDS2').textContent='Verified ✓';G('iDS3').textContent=msg.length+' characters';addStat(sLen);toast('Decrypted!','Message extracted successfully','ok')}
+  catch(er){hideP('iDP');G('iDR').value='⚠ DECRYPTION FAILED\n\n• Wrong password\n• Wrong LSB depth\n• Image was re-saved or converted after encoding';toast('Failed','Wrong password or LSB depth','err')}
+}
+
+/* AUDIO */
+let ABUF=null,SWAV=null;
+G('aF').addEventListener('change',function(e){const f=e.target.files[0];if(!f)return;const fr=new FileReader();fr.onload=ev=>{const actx=new(window.AudioContext||window.webkitAudioContext)();actx.decodeAudioData(ev.target.result.slice(0),buf=>{ABUF=buf;const cap=Math.floor(buf.length*buf.numberOfChannels/8)-4;G('aDr').textContent=buf.duration.toFixed(1);G('aSp').textContent=(buf.length/1000).toFixed(1)+'K';G('aSR').textContent=buf.sampleRate+'Hz';G('aCp').textContent=fB(Math.max(0,cap));drawWave(buf);toast('Audio loaded',`${buf.duration.toFixed(1)}s · ${buf.sampleRate}Hz`,'ok')},()=>toast('Error','Failed to decode audio. Use WAV format.','err'))};fr.readAsArrayBuffer(f)});
+function updA(){if(!ABUF)return;G('aMH').textContent=G('aMsg').value.length+' chars';const est=new TextEncoder().encode(G('aMsg').value).length+4+12+17,cap=Math.floor(ABUF.length*ABUF.numberOfChannels/8)-4,pct=cap>0?Math.min(100,(est/cap)*100):0;G('aCP').textContent=pct.toFixed(1)+'%';G('aCB').style.width=pct+'%'}
+function drawWave(buf){const cv=G('audviz'),ctx=cv.getContext('2d');cv.width=cv.clientWidth||500;cv.height=58;ctx.clearRect(0,0,cv.width,cv.height);const d=buf.getChannelData(0),step=Math.ceil(d.length/cv.width),mid=cv.height/2;const gr=ctx.createLinearGradient(0,0,cv.width,0);gr.addColorStop(0,'#0369a1');gr.addColorStop(.5,'#38bdf8');gr.addColorStop(1,'#34d399');ctx.strokeStyle=gr;ctx.lineWidth=1.5;ctx.beginPath();for(let x=0;x<cv.width;x++){let mn=1,mx=-1;for(let s=0;s<step;s++){const v=d[x*step+s]||0;if(v<mn)mn=v;if(v>mx)mx=v}ctx.moveTo(x,mid+mn*mid);ctx.lineTo(x,mid+mx*mid)}ctx.stroke()}
+
+async function encAud(){
+  if(!ABUF){toast('No audio','Load a WAV file first','err');return}
+  const msg=G('aMsg').value.trim();if(!msg){toast('No message','Enter a secret message','err');return}
+  const pwd=G('aPwd').value;if(!pwd){toast('No password','Enter a password','err');return}
+  setP('aEP','aEB','aEPct',20,'Encrypting...','aEL');await sleep(30);
+  const store=await ENC(msg,pwd),embed=mkE(store);
+  const bits=[];for(const b of embed)for(let i=7;i>=0;i--)bits.push((b>>i)&1);
+  const ch0=new Float32Array(ABUF.getChannelData(0));
+  if(bits.length>ch0.length){hideP('aEP');toast('Too short',`Need ${bits.length} samples, have ${ch0.length}`,'err');return}
+  setP('aEP','aEB','aEPct',55,'Embedding...','aEL');await sleep(30);
+  for(let i=0;i<bits.length;i++){let s=Math.round(ch0[i]*32767);s=(s&~1)|bits[i];ch0[i]=Math.max(-1,Math.min(1,s/32767))}
+  const numCh=ABUF.numberOfChannels,chs=[ch0];for(let c=1;c<numCh;c++)chs.push(ABUF.getChannelData(c));
+  setP('aEP','aEB','aEPct',80,'Building WAV...','aEL');await sleep(30);
+  SWAV=bldWav(chs,ABUF.sampleRate,numCh);setP('aEP','aEB','aEPct',100,'Done!','aEL');await sleep(250);hideP('aEP');
+  const fname='stego_audio_'+Date.now()+'.wav';G('aDN').textContent=fname;G('aDLP').classList.add('on');
+  G('aDB').onclick=function(){if(!SWAV){toast('Not ready','Encode audio first','err');return}const bytes=new Uint8Array(SWAV);let bin='';for(let i=0;i<bytes.length;i++)bin+=String.fromCharCode(bytes[i]);const a=document.createElement('a');a.href='data:audio/wav;base64,'+btoa(bin);a.download=fname;a.style.display='none';document.body.appendChild(a);a.click();setTimeout(()=>document.body.removeChild(a),500);toast('Downloading',fname,'ok')};
+  addStat(store.length);toast('Audio encoded!','Click Download WAV','ok');
+}
+
+function bldWav(chs,sr,nch){const bps=16,ba=nch*2,byr=sr*ba,ns=chs[0].length,dl=ns*nch*2;const buf=new ArrayBuffer(44+dl),v=new DataView(buf);const ws=(o,s)=>{for(let i=0;i<s.length;i++)v.setUint8(o+i,s.charCodeAt(i))};ws(0,'RIFF');v.setUint32(4,36+dl,true);ws(8,'WAVE');ws(12,'fmt ');v.setUint32(16,16,true);v.setUint16(20,1,true);v.setUint16(22,nch,true);v.setUint32(24,sr,true);v.setUint32(28,byr,true);v.setUint16(32,ba,true);v.setUint16(34,bps,true);ws(36,'data');v.setUint32(40,dl,true);let off=44;for(let i=0;i<ns;i++)for(let c=0;c<nch;c++){v.setInt16(off,Math.max(-32768,Math.min(32767,Math.round((chs[c]?.[i]||0)*32767))),true);off+=2}return buf}
+
+async function decAud(){
+  const f=G('aDF').files[0];if(!f){toast('No file','Load a stego WAV','err');return}
+  const pwd=G('aDPwd').value;if(!pwd){toast('No password','Enter the decryption password','err');return}
+  setP('aDP','aDB2','aDPct',20,'','');await sleep(20);
+  const ab=await f.arrayBuffer();const actx=new(window.AudioContext||window.webkitAudioContext)();
+  let buf;try{buf=await new Promise((res,rej)=>actx.decodeAudioData(ab.slice(0),res,rej))}catch(e){hideP('aDP');toast('Error','Failed to decode audio file','err');return}
+  const samp=buf.getChannelData(0);setP('aDP','aDB2','aDPct',45,'','');await sleep(20);
+  let sLen=0;for(let byte=0;byte<4;byte++){let val=0;for(let b=0;b<8;b++)val=(val<<1)|(Math.round(samp[byte*8+b]*32767)&1);sLen|=(val<<(byte*8))}
+  if(sLen<=0||32+sLen*8>samp.length){hideP('aDP');toast('Not found','No hidden data. Wrong file?','err');return}
+  setP('aDP','aDB2','aDPct',65,'','');await sleep(20);
+  const store=new Uint8Array(sLen);for(let i=0;i<sLen;i++){let val=0;for(let b=0;b<8;b++)val=(val<<1)|(Math.round(samp[32+i*8+b]*32767)&1);store[i]=val}
+  setP('aDP','aDB2','aDPct',85,'','');await sleep(20);
+  try{const msg=await DEC(store,pwd);G('aDR').value=msg;setP('aDP','aDB2','aDPct',100,'','');await sleep(250);hideP('aDP');G('aDS').classList.add('on');G('aDS1').textContent=fB(sLen);G('aDS2').textContent='Verified ✓';addStat(sLen);toast('Decrypted!','Audio message extracted','ok')}
+  catch(e){hideP('aDP');G('aDR').value='⚠ DECRYPTION FAILED — wrong password';toast('Failed','Wrong password','err')}
+}
+
+/* TEXT */
+const Z0='\u200B',Z1='\u200C',ZE='\u2060';
+async function encTxt(){
+  const cov=G('tCov').value,sec=G('tSec').value.trim(),pwd=G('tPwd').value,m=G('tMeth').value;
+  if(!cov){toast('No cover','Enter cover text','err');return}if(!sec){toast('No secret','Enter a secret message','err');return}if(!pwd){toast('No password','Enter a password','err');return}
+  const store=await ENC(sec,pwd),embed=mkE(store);
+  let bits='';for(const b of embed)bits+=b.toString(2).padStart(8,'0');
+  let out='';
+  if(m==='zwc'){const zs=bits.split('').map(b=>b==='0'?Z0:Z1).join('')+ZE;out=(cov[0]||'')+zs+cov.slice(1)}
+  else if(m==='ws'){let bi=0;out=cov.split('\n').map(l=>bi>=bits.length?l:l+(bits[bi++]==='1'?'\t':' ')).join('\n')}
+  else{const HG={a:'а',e:'е',o:'о',p:'р',c:'с',x:'х',i:'і',y:'у',A:'А',E:'Е',O:'О',P:'Р',C:'С',X:'Х',I:'І',Y:'У'};let bi=0;out=[...cov].map(ch=>{if(bi>=bits.length||!HG[ch])return ch;return bits[bi++]==='1'?HG[ch]:ch}).join('')}
+  G('tOut').value=out;G('tOW').style.display='block';
+  G('tSt').textContent=`Method: ${m.toUpperCase()} · Payload: ${store.length}B · Bits: ${bits.length}`;
+  addStat(store.length);toast('Encoded!','Copy the stego text and send it','ok');
+}
+
+async function decTxt(){
+  const stego=G('tStIn').value,pwd=G('tDPwd').value,m=G('tDMeth').value;
+  if(!stego){toast('No text','Paste the stego text','err');return}if(!pwd){toast('No password','Enter the decryption password','err');return}
+  let bits='';
+  if(m==='zwc'){for(const ch of stego){if(ch===Z0)bits+='0';else if(ch===Z1)bits+='1';else if(ch===ZE)break}}
+  else if(m==='ws'){for(const l of stego.split('\n')){if(!l.length)continue;const last=l[l.length-1];if(last==='\t')bits+='1';else if(last===' ')bits+='0'}}
+  else{const CYR=new Set(['а','е','о','р','с','х','і','у','А','Е','О','Р','С','Х','І','У']),LAT=new Set(['a','e','o','p','c','x','i','y','A','E','O','P','C','X','I','Y']);for(const ch of stego){if(CYR.has(ch))bits+='1';else if(LAT.has(ch))bits+='0'}}
+  if(bits.length<32){toast('Not found','No hidden data. Check method.','err');return}
+  let sLen=0;for(let byte=0;byte<4;byte++){const seg=bits.slice(byte*8,(byte+1)*8);if(seg.length<8)break;sLen|=(parseInt(seg,2)<<(byte*8))}
+  const pb=bits.slice(32,32+sLen*8);if(pb.length<sLen*8){toast('Incomplete','Paste the complete stego text','err');return}
+  const store=new Uint8Array(sLen);for(let i=0;i<sLen;i++)store[i]=parseInt(pb.slice(i*8,(i+1)*8),2);
+  try{const msg=await DEC(store,pwd);G('tDR').value=msg;addStat(sLen);toast('Revealed!','Hidden message extracted','ok')}
+  catch(e){G('tDR').value='⚠ DECRYPTION FAILED — wrong password or method';toast('Failed','Wrong password or method','err')}
+}
+</script>
+</body>
+</html>
